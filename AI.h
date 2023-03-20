@@ -12,6 +12,9 @@ using namespace std;
 //学习次数
 extern int learnCount;
 
+//激活函数
+extern double ReLU(double x);
+
 //初始化
 extern void start();
 
