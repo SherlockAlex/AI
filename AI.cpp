@@ -2,13 +2,12 @@
 
 int learnCount = 10;//学习十次
 
-double xData[10] = {0.1,0.2,0.3,0.1,0.5,0.0,0.7,0.8,0.9};
-double yData[1] = {0.5};
+double w[2] = { 0.3, 0.4 };
+double xData[2] = { 0.2,0.4 };
+double t[1] = { 0.5 };
+double b = 0.45;
 
-//训练模型,dim(x)=dim(w),dim(b)=神经元个数
-double model(double * x,double * w,double b);
-
-double loss(double y,double t);
+void grad(double y);//计算梯度
 
 void start()
 {
@@ -18,6 +17,10 @@ void start()
 void learnLoop()
 {
 	//学习
+	double z = w[0] * xData[0] + w[1] * xData[1] + b;
+	double y = ReLU(z);
+
+
 }
 
 double ReLU(double x)
@@ -28,19 +31,9 @@ double ReLU(double x)
 	return x;
 }
 
-double model(double* x, double* w, double b)
+void grad(double z,double y)
 {
-	//z=wx+b
-	float z=0;
-
-	for (int i = 0; i < 10; i++) {
-		z += x[i] * w[i];
-	}
-	z += b;
-	return z;
-}
-
-double loss(double y, double t)
-{
-	return 0.0;
+	b = b - 0.01 * (y - t[0]);
+	w[0] = w[0] - 0.01 * (y - t[0]) * xData[0];
+	w[1] = w[1] - 0.01 * (y - t[1]) * xData[1];
 }
