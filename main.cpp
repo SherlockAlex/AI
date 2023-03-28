@@ -1,83 +1,27 @@
 #include <iostream>
 #include <math.h>
-
-#define WORDSCOUNT 12
-
-using namespace std;
-
-typedef long double diff;
-
-//学习数据
-	//[单词个数][单词长度]
-const char englishTrain[WORDSCOUNT][5] = {
-	"best",
-	"I",
-	"you",
-	"need",
-	"test",
-	"nice",
-	"evil",
-	"mood",
-	"view",
-	"easy",
-	"mix",
-	"holy"
-};
-
-//目标值
-const string chinese[WORDSCOUNT] = {
-	"好的",
-	"我",
-	"你",
-	"需要",
-	"测试",
-	"漂亮",
-	"邪恶的",
-	"月亮",
-	"风景",
-	"简单",
-	"混合",
-	"神圣的"
-
-};
-
-//标签集
-diff t[WORDSCOUNT];
-
-diff w[2][5] = {
-	{ 0.01,0.02,0.05,0.06,0.02 },
-	{ 0.01,0.02,0.05,0.06,0.02 }
-};
-diff b[3] = {0.2,0.3,0.4};
-diff g[2];
-diff k[2] = {0.03,0.05};
+#include "Brain.h"
 
 diff loss = 0;
 
 
-
 //学习次数
-long int epochs = 60000000;
+long int epochs = 5000000;
 //学习率
-diff rate = 0.001;
+diff rate = 0.0001;
 
 diff indexKey=0;
 
 //初始化目标值
 void initT();
-
 //输入一个单词，返回一个数字,n表示第n个输出
 diff layerOneModel(const char word[5],int n);
-
 diff getIndex(const char word[5]);
-
 diff sigmoid(diff x);
-
 void updateK(diff y, int n);
 //n表示更新第n个单词
 void updateW(diff y,int n,const char word[5]);
 void updateB(diff y,int n);
-
 void test(int n);
 
 int main(int argc,char * argv[]) {
@@ -103,7 +47,7 @@ int main(int argc,char * argv[]) {
 			loss = (y - t[i]) * (y - t[i]);
 		}
 
-		if ((epoch+1)%20==0) {
+		if ((epoch+1)%100000==0) {
 			//每10显示当前学习的进程
 			//cout<<"学习次数 = "<< epoch+1<< " loss = "<< loss << endl;
 			printf("学习次数 = %d,loss = %f\n", epoch + 1, loss);
@@ -114,16 +58,27 @@ int main(int argc,char * argv[]) {
 	//显示w
 	cout << "W" << endl;
 
-	for (int i = 0; i < 2;i++) {
+	for (int i = 0; i < BRAINCOUNT;i++) {
 		for (int j = 0; j < 5;j++) {
 			cout << w[i][j] << " ";
 		}
 		cout << endl;
 	}
 
-	cout << "B" << endl;
-	for (int i = 0; i < 3;i++) {
+	cout <<endl<< "B" << endl;
+	for (int i = 0; i < BRAINCOUNT+1;i++) {
 		cout << b[i] << " ";
+	}
+
+	cout <<endl<< "K" << endl;
+	for (int i = 0; i < BRAINCOUNT; i++) {
+		cout << k[i] << " ";
+	}
+
+	cout << endl << "标签" << endl;
+	for (int i = 0; i < WORDSCOUNT; i++)
+	{
+		cout <<englishTrain[i]<<" : " << t[i] << endl;
 	}
 
 	//应用测试
@@ -154,17 +109,16 @@ void initT()
 }
 
 diff getIndex(const char word[5]) {
-	diff z1 = layerOneModel(word, 0);
-	diff z2 = layerOneModel(word, 1);
-	g[0] = sigmoid(z1);
-	g[1] = sigmoid(z2);
-	//g[0] = (z1);
-	//g[1] = (z2);
-	//cout <<endl<< "g1 = " << g[0] << endl;
-	//cout << "g2 = " << g[1] << endl;
-
+	for (int i = 0; i < BRAINCOUNT; i++) {
+		diff z = layerOneModel(word, i);
+		g[i] = sigmoid(z);
+	}
+	diff y = 0;
 	//第二层输出
-	diff y = k[0] * g[0] + k[1] * g[1] + b[2];
+	for (int i = 0; i < BRAINCOUNT;i++) {
+		y += k[i] * g[i];
+	}
+	y += b[BRAINCOUNT];
 	return y;
 }
 
@@ -197,7 +151,7 @@ diff sigmoid(diff x)
 
 void updateK(diff y,int n) {
 	diff grad = 2 * (y - t[n]);
-	for (int i = 0; i < 2;i++) {
+	for (int i = 0; i < BRAINCOUNT;i++) {
 		k[i] = k[i] - rate * grad * g[i];
 	}
 }
@@ -214,7 +168,7 @@ void updateW(diff y,int n, const char word[5])
 		x[i] = word[i] / sum;
 	}
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < BRAINCOUNT; i++) {
 		for (int j = 0; j < 5; j++) {
 			//w[i][j] = w[i][j] - rate * grad* k[i] * x[j];
 			w[i][j] = w[i][j] - rate * grad*g[i]*(1-g[i]) * k[i] * x[j];
@@ -228,11 +182,11 @@ void updateB(diff y,int n)
 	//学习第n个单词
 	diff grad = 2 * (y - t[n]);
 	
-	for (int i = 0; i < 2;i++) {
+	for (int i = 0; i < BRAINCOUNT;i++) {
 		b[i] = b[i] - rate * grad * g[i] * (1 - g[i]) * k[i];
 		//b[i] = b[i] - rate * grad * k[i];
 	}
-	b[2] = b[2] - rate * grad;
+	b[BRAINCOUNT] = b[BRAINCOUNT] - rate * grad;
 }
 
 void test(int n)
