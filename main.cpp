@@ -57,7 +57,7 @@ diff loss = 0;
 
 
 //学习次数
-int epochs = 13000;
+long int epochs = 60000000;
 //学习率
 diff rate = 0.001;
 
@@ -85,7 +85,7 @@ int main(int argc,char * argv[]) {
 	initT();
 	
 	//进行学习
-	for (int epoch = 0; epoch < epochs;epoch++)
+	for (long int epoch = 0; epoch < epochs;epoch++)
 	{
 		//学习第i个单词
 		for (int i = 0; i < WORDSCOUNT;i++) {
@@ -98,8 +98,8 @@ int main(int argc,char * argv[]) {
 			//cout << y <<"中文 = " << chinese[(int)round(indexKey * y)] << endl;
 			//根据梯度下降法进行更新权重
 			updateK(y, i);
+			updateB(y, i);
 			updateW(y, i, englishTrain[i]);
-			updateB(y,i);
 			loss = (y - t[i]) * (y - t[i]);
 		}
 
@@ -146,6 +146,7 @@ int main(int argc,char * argv[]) {
 
 void initT()
 {
+	//
 	indexKey = (0 + WORDSCOUNT - 1) * WORDSCOUNT * 0.5;
 	for (int i = 0; i < WORDSCOUNT;i++) {
 		t[i] = (i/indexKey);
@@ -157,10 +158,13 @@ diff getIndex(const char word[5]) {
 	diff z2 = layerOneModel(word, 1);
 	g[0] = sigmoid(z1);
 	g[1] = sigmoid(z2);
+	//g[0] = (z1);
+	//g[1] = (z2);
+	//cout <<endl<< "g1 = " << g[0] << endl;
+	//cout << "g2 = " << g[1] << endl;
 
 	//第二层输出
-	diff z = k[0] * g[0] + k[1] * g[1] + b[2];
-	diff y = sigmoid(z);
+	diff y = k[0] * g[0] + k[1] * g[1] + b[2];
 	return y;
 }
 
@@ -177,6 +181,7 @@ diff layerOneModel(const char word[5], int n)
 		x[i] = word[i] / sum;
 	}
 
+	//开始学习
 	for (int i = 0; i < 5;i++) {
 		y += w[n][i] * x[i];
 	}
@@ -186,12 +191,12 @@ diff layerOneModel(const char word[5], int n)
 
 diff sigmoid(diff x)
 {
-	diff z = 1 / (1 + exp2(-x));
+	diff z = 1 / (1 + exp2l(-x));
 	return z;
 }
 
 void updateK(diff y,int n) {
-	diff grad = 2 * (y - t[n]) * y * (1 - y);
+	diff grad = 2 * (y - t[n]);
 	for (int i = 0; i < 2;i++) {
 		k[i] = k[i] - rate * grad * g[i];
 	}
@@ -211,7 +216,8 @@ void updateW(diff y,int n, const char word[5])
 
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 5; j++) {
-			w[i][j] = w[i][j] - rate * grad*y*(1-y)* k[i]*g[i]*(1-g[i]) * x[j];
+			//w[i][j] = w[i][j] - rate * grad* k[i] * x[j];
+			w[i][j] = w[i][j] - rate * grad*g[i]*(1-g[i]) * k[i] * x[j];
 		}
 	}
 	
@@ -223,9 +229,10 @@ void updateB(diff y,int n)
 	diff grad = 2 * (y - t[n]);
 	
 	for (int i = 0; i < 2;i++) {
-		b[i] = b[i] - rate * grad * y * (1 - y) * k[i]*g[i]*(1-g[i]);
+		b[i] = b[i] - rate * grad * g[i] * (1 - g[i]) * k[i];
+		//b[i] = b[i] - rate * grad * k[i];
 	}
-	b[2] = b[2] - rate * grad * y * (1 - y);
+	b[2] = b[2] - rate * grad;
 }
 
 void test(int n)
