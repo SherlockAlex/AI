@@ -6,9 +6,9 @@ diff loss = 0;
 
 
 //学习次数
-long int epochs = 5000000;
+long int epochs = 1000000;
 //学习率
-diff rate = 0.0001;
+diff rate = 0.001;
 
 diff indexKey=0;
 
@@ -37,14 +37,11 @@ int main(int argc,char * argv[]) {
 			
 			diff y = getIndex(englishTrain[i]);
 
-			//double y = sigmoid(z1);
-			//printf("单词 = %s, 训练结果 = ", englishTrain[i]);
-			//cout << y <<"中文 = " << chinese[(int)round(indexKey * y)] << endl;
-			//根据梯度下降法进行更新权重
 			updateK(y, i);
 			updateB(y, i);
 			updateW(y, i, englishTrain[i]);
 			loss = (y - t[i]) * (y - t[i]);
+
 		}
 
 		if ((epoch+1)%100000==0) {
@@ -60,19 +57,25 @@ int main(int argc,char * argv[]) {
 
 	for (int i = 0; i < BRAINCOUNT;i++) {
 		for (int j = 0; j < 5;j++) {
-			cout << w[i][j] << " ";
+			cout << w[i][j] << ", ";
 		}
 		cout << endl;
 	}
 
 	cout <<endl<< "B" << endl;
 	for (int i = 0; i < BRAINCOUNT+1;i++) {
-		cout << b[i] << " ";
+		cout << b[i] << ", ";
+		if ((i+1)%5==0) {
+			cout << endl;
+		}
 	}
 
 	cout <<endl<< "K" << endl;
 	for (int i = 0; i < BRAINCOUNT; i++) {
-		cout << k[i] << " ";
+		cout << k[i] << ", ";
+		if ((i + 1) % 5 == 0) {
+			cout << endl;
+		}
 	}
 
 	cout << endl << "标签" << endl;
@@ -102,7 +105,8 @@ int main(int argc,char * argv[]) {
 void initT()
 {
 	//
-	indexKey = (0 + WORDSCOUNT - 1) * WORDSCOUNT * 0.5;
+	//indexKey = (0 + WORDSCOUNT - 1) * WORDSCOUNT * 0.5;
+	indexKey = 100;
 	for (int i = 0; i < WORDSCOUNT;i++) {
 		t[i] = (i/indexKey);
 	}
@@ -202,5 +206,5 @@ void test(int n)
 	cout << "应用测试" << endl;
 	cout << "真实值："<< t[n]<<" , 模型预测值： "<< getIndex(englishTrain[n]) << endl;
 	printf("单词 = %s, ", englishTrain[n]);
-	cout << "中文 = " << chinese[(int)(indexKey * getIndex(englishTrain[n]))];
+	cout << "中文 = " << chinese[(int)round(indexKey * getIndex(englishTrain[n]))];
 }

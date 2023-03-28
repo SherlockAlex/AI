@@ -1,2 +1,2 @@
-﻿  main.cpp
-  AI.vcxproj -> D:\Work\ai\AI\x64\Debug\AI.exe
+﻿  Brain.cpp
+LINK : fatal error LNK1168: 无法打开 D:\Work\ai\AI\x64\Debug\AI.exe 进行写入
