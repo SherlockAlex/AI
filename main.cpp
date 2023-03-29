@@ -7,9 +7,9 @@ diff loss = 0;
 
 
 //学习次数
-long int epochs = 100;
+long int epochs = 20000000;
 //学习率
-diff rate = 0.001;
+diff rate = 0.00001;
 
 diff indexKey=50;
 
