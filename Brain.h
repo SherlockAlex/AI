@@ -5,7 +5,7 @@
 using namespace std;
 
 #define WORDSCOUNT 12
-#define BRAINCOUNT 26	//隐含层神经元个数
+#define BRAINCOUNT 30	//隐含层神经元个数
 
 typedef long double diff;
 

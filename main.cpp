@@ -6,7 +6,7 @@ diff loss = 0;
 
 
 //学习次数
-long int epochs = 1000000;
+long int epochs = 100000000;
 //学习率
 diff rate = 0.001;
 
@@ -44,10 +44,14 @@ int main(int argc,char * argv[]) {
 
 		}
 
-		if ((epoch+1)%100000==0) {
+		if ((epoch+1)%10==0) {
 			//每10显示当前学习的进程
 			//cout<<"学习次数 = "<< epoch+1<< " loss = "<< loss << endl;
 			printf("学习次数 = %d,loss = %f\n", epoch + 1, loss);
+		}
+
+		if (cin.get() == 'q') {
+			break;
 		}
 
 	}
