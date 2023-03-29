@@ -1,19 +1,21 @@
 #include <iostream>
 #include <math.h>
+
 #include "Brain.h"
 
 diff loss = 0;
 
 
 //学习次数
-long int epochs = 100000000;
+long int epochs = 100;
 //学习率
 diff rate = 0.001;
 
-diff indexKey=0;
+diff indexKey=50;
 
 //初始化目标值
 void initT();
+
 //输入一个单词，返回一个数字,n表示第n个输出
 diff layerOneModel(const char word[5],int n);
 diff getIndex(const char word[5]);
@@ -23,6 +25,10 @@ void updateK(diff y, int n);
 void updateW(diff y,int n,const char word[5]);
 void updateB(diff y,int n);
 void test(int n);
+
+void displayW();
+void displayB();
+void displayK();
 
 int main(int argc,char * argv[]) {
 	
@@ -36,7 +42,7 @@ int main(int argc,char * argv[]) {
 			//首先将单词给神经元,第一层开始工作
 			
 			diff y = getIndex(englishTrain[i]);
-
+			//cout << y<<endl;
 			updateK(y, i);
 			updateB(y, i);
 			updateW(y, i, englishTrain[i]);
@@ -44,43 +50,25 @@ int main(int argc,char * argv[]) {
 
 		}
 
-		if ((epoch+1)%10==0) {
-			//每10显示当前学习的进程
+		if ((epoch+1)%100000!=0)
+		{
+			continue;
+		}
+
+		//每10显示当前学习的进程
 			//cout<<"学习次数 = "<< epoch+1<< " loss = "<< loss << endl;
-			printf("学习次数 = %d,loss = %f\n", epoch + 1, loss);
-		}
-
-		if (cin.get() == 'q') {
-			break;
-		}
+		printf("\n学习次数 = %d,loss = %f\n", epoch + 1, loss);
+		displayW();
+		displayB();
+		displayK();
 
 	}
 
-	//显示w
-	cout << "W" << endl;
+	
 
-	for (int i = 0; i < BRAINCOUNT;i++) {
-		for (int j = 0; j < 5;j++) {
-			cout << w[i][j] << ", ";
-		}
-		cout << endl;
-	}
+	
 
-	cout <<endl<< "B" << endl;
-	for (int i = 0; i < BRAINCOUNT+1;i++) {
-		cout << b[i] << ", ";
-		if ((i+1)%5==0) {
-			cout << endl;
-		}
-	}
-
-	cout <<endl<< "K" << endl;
-	for (int i = 0; i < BRAINCOUNT; i++) {
-		cout << k[i] << ", ";
-		if ((i + 1) % 5 == 0) {
-			cout << endl;
-		}
-	}
+	
 
 	cout << endl << "标签" << endl;
 	for (int i = 0; i < WORDSCOUNT; i++)
@@ -211,4 +199,39 @@ void test(int n)
 	cout << "真实值："<< t[n]<<" , 模型预测值： "<< getIndex(englishTrain[n]) << endl;
 	printf("单词 = %s, ", englishTrain[n]);
 	cout << "中文 = " << chinese[(int)round(indexKey * getIndex(englishTrain[n]))];
+}
+
+void displayW()
+{
+	//显示w
+	cout << "W" << endl;
+
+	for (int i = 0; i < BRAINCOUNT; i++) {
+		for (int j = 0; j < 5; j++) {
+			cout << w[i][j] << ", ";
+		}
+		cout << endl;
+	}
+}
+
+void displayB()
+{
+	cout << endl << "B" << endl;
+	for (int i = 0; i < BRAINCOUNT + 1; i++) {
+		cout << b[i] << ", ";
+		if ((i + 1) % 5 == 0) {
+			cout << endl;
+		}
+	}
+}
+
+void displayK()
+{
+	cout << endl << "K" << endl;
+	for (int i = 0; i < BRAINCOUNT; i++) {
+		cout << k[i] << ", ";
+		if ((i + 1) % 5 == 0) {
+			cout << endl;
+		}
+	}
 }
