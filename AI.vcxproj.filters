@@ -21,9 +21,15 @@
     <ClCompile Include="Brain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="AIMath.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Brain.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AIMath.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

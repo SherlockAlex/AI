@@ -2,6 +2,7 @@
 #include <math.h>
 
 #include "Brain.h"
+#include "AIMath.h"
 
 diff loss = 0;
 
@@ -9,7 +10,7 @@ diff loss = 0;
 //学习次数
 long int epochs = 20000000;
 //学习率
-diff rate = 0.00001;
+diff rate = 0.0001;
 
 diff indexKey=50;
 
@@ -29,6 +30,8 @@ void test(int n);
 void displayW();
 void displayB();
 void displayK();
+
+
 
 int main(int argc,char * argv[]) {
 	
@@ -86,7 +89,7 @@ int main(int argc,char * argv[]) {
 		char s[5];
 		cin>>s;
 		diff index=getIndex(s);
-		cout <<"输出index："<<index << " 识别到：" << chinese[(int)(indexKey * index)];
+		cout <<"输出index："<<A_Round(index) << " 识别到：" << chinese[(int)(indexKey * A_Round(index))];
 	}
 	
 	
@@ -136,7 +139,7 @@ diff layerOneModel(const char word[5], int n)
 		y += w[n][i] * x[i];
 	}
 	y += b[n];
-	return y;
+	return (y);
 }
 
 diff sigmoid(diff x)
@@ -196,9 +199,9 @@ void test(int n)
 	//输入一个n，就返回中文意思
 	
 	cout << "应用测试" << endl;
-	cout << "真实值："<< t[n]<<" , 模型预测值： "<< getIndex(englishTrain[n]) << endl;
+	cout << "真实值："<< t[n]<<" , 模型预测值： "<< A_Round(getIndex(englishTrain[n])) << endl;
 	printf("单词 = %s, ", englishTrain[n]);
-	cout << "中文 = " << chinese[(int)round(indexKey * getIndex(englishTrain[n]))];
+	cout << "中文 = " << chinese[(int)(indexKey*A_Round(getIndex(englishTrain[n])))];
 }
 
 void displayW()
